@@ -1,9 +1,6 @@
 package com.example.myapplication;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -13,16 +10,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 public class EndGame extends AppCompatActivity {
 
@@ -53,86 +44,17 @@ public class EndGame extends AppCompatActivity {
         }else{
             saveScore(score,scores,sp);
         }
-//        if(lowScore < score)
-//        {
-//            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-////        builder.setTitle("Please enter your name:                   ");
-//            LayoutInflater li = LayoutInflater.from(this);
-//            View promptsView = li.inflate(R.layout.promt_screen, null);
-//            // Set up the input
-//            final EditText inputName = promptsView.findViewById(R.id.editTextDialogUserInput);
-//            // Specify the type of input expected;
-//            inputName.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
-//            builder.setView(promptsView);
-//            builder.setCancelable(false).setPositiveButton(android.R.string.ok,(dialog, which) -> {
-//                dialog.dismiss();
-//                name = inputName.getText().toString().replace(",","").replace(":","");
-//                SharedPreferences.Editor ed = sp.edit();
-//                ed.putInt("lastScore", score);
-//                ed.putLong("lastLat", Double.doubleToLongBits(latitude));
-//                ed.putLong("lastLon", Double.doubleToLongBits(longitude));
-//                ed.putString("lastName",name);
-//                ed.apply();
-//            }).create().show();
-//        }
         scoreView.setText("Score : " + score);
 
-        backMenu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                sendToMenu(view);
-            }
-        });
-        highScore.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                sendToHighScore(view);
-            }
-        });
+        backMenu.setOnClickListener(view -> sendToMenu(view));
+        highScore.setOnClickListener(view -> sendToHighScore(view));
 
-    }
-    public String enterName(){
-
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//        builder.setTitle("Please enter your name:                   ");
-        LayoutInflater li = LayoutInflater.from(this);
-        View promptsView = li.inflate(R.layout.promt_screen, null);
-        // Set up the input
-        final EditText inputName = promptsView.findViewById(R.id.editTextDialogUserInput);
-        // Specify the type of input expected;
-        inputName.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
-        builder.setView(promptsView);
-        builder.setCancelable(false).setPositiveButton(android.R.string.ok,(dialog, which) -> {
-            dialog.dismiss();
-            name = inputName.getText().toString().replace(",","").replace(":","");
-        }).create().show();
-//
-//        // Set up the buttons
-//        builder.setPositiveButton("OK", (dialog, which) -> {
-//            name = inputName.getText().toString();
-//            SharedPreferences preferences = getSharedPreferences("Prefs", 0);
-//            SharedPreferences.Editor editor = preferences.edit();
-//            editor.putString("nameLastScore",name);
-//            editor.apply();
-//
-//        }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                dialog.cancel();
-//            }
-//        });
-
-//        builder.show();
-
-
-        return name;
     }
 
     public void saveScore(Score score, ArrayList<Score> scores, SharedPreferences sp){
         Gson gson = new Gson();
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//        builder.setTitle("Please enter your name:                   ");
+        //AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MyActivity.this, R.style.MyDialogTheme);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.MyDialogTheme);
         LayoutInflater li = LayoutInflater.from(this);
         View promptsView = li.inflate(R.layout.promt_screen, null);
         // Set up the input

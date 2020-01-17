@@ -4,15 +4,12 @@ package com.example.myapplication;
     import androidx.appcompat.app.AppCompatActivity;
     import androidx.core.app.ActivityCompat;
     import androidx.core.content.ContextCompat;
-
     import android.Manifest;
     import android.content.Intent;
     import android.content.pm.PackageManager;
     import android.os.Bundle;
-    import android.view.View;
     import android.widget.Button;
     import android.widget.Toast;
-
     import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -31,17 +28,11 @@ public class MainActivity extends AppCompatActivity {
         buttonNewGame = findViewById(R.id.buttonNewGame);
         buttonSetting = findViewById(R.id.buttonSetting);
         buttonHighScore = findViewById(R.id.button3);
-        buttonHighScore.setOnClickListener(v -> openHighScore());
         buttonNewGame.setOnClickListener(v -> openPlayScreen());
         buttonSetting.setOnClickListener(v -> openSetting());
+        buttonHighScore.setOnClickListener(v -> openHighScore());
         getPermissions();
 
-    }
-
-    public void openHighScore(){
-        Intent intent = new Intent(this, HighScore.class);
-        startActivity(intent);
-        finish();
     }
 
     public void openPlayScreen(){
@@ -52,6 +43,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void openSetting(){
         Intent intent = new Intent(this, Setting.class);
+        startActivity(intent);
+        finish();
+    }
+
+    public void openHighScore(){
+        Intent intent = new Intent(this, HighScore.class);
         startActivity(intent);
         finish();
     }

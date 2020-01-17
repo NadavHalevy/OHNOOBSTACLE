@@ -2,15 +2,8 @@ package com.example.myapplication;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-
-import android.Manifest;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.pm.PackageManager;
-import android.graphics.Point;
 import android.hardware.Sensor;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
@@ -19,7 +12,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -30,7 +22,6 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import android.hardware.SensorEvent;
-
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.gson.Gson;
@@ -40,12 +31,11 @@ public class PlayScreen extends AppCompatActivity implements View.OnClickListene
 
     private FusedLocationProviderClient fusedLocationClient;
 
-    final int ZERO = 0, LIFE = 3, UP = 1500;
-    private int END = 780, STEP = (END / 4);
+    final int ZERO = 0, LIFE = 3, UP = 1500, END = 780, STEP = (END / 4);
+    private int first = 0;
     private Random random;
     Vibrator vib;
     List<Integer> divideScreenWidth = new ArrayList<>();
-    private BroadcastReceiver broadcastReceiver;
 
     //image
     private ImageView car, spike1, spike2, spike3, spike4, fuel, heart1, heart2, heart3;
@@ -68,19 +58,12 @@ public class PlayScreen extends AppCompatActivity implements View.OnClickListene
     private double latitude = 0,longitude = 0;
     private int moveSpeed;
     Sensor sensor;
-    boolean isHit = false;
-    //sound
-    //private SoundClass sound;
-
+    boolean isHit = false, isScore = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play_screen);
-//        Point p = new Point();
-//        this.getWindowManager().getDefaultDisplay().getSize(p);
-//        END = p.x;
-//        STEP = END/4;
         // Call object
         car = findViewById(R.id.car);
         spike1 = findViewById(R.id.spike1);
@@ -99,20 +82,18 @@ public class PlayScreen extends AppCompatActivity implements View.OnClickListene
         right.setOnClickListener(this);
         random = new Random();
         timer = new Timer();
-        //sound = new SoundClass(this);
         sensorManager=(SensorManager)getSystemService(Context.SENSOR_SERVICE);
 
         sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         sensorManager.registerListener((SensorEventListener) PlayScreen.this,sensor,SensorManager.SENSOR_DELAY_NORMAL);
-        //getGpsInfo();
         //mode play
         String slowSpeed = "slow";
         Intent modeIntent = getIntent();
         speed = modeIntent.getStringExtra("speed");
         if(speed != null && speed.equals(slowSpeed))
-            moveSpeed = 18;
+            moveSpeed = 14;
         else
-            moveSpeed = 26;
+            moveSpeed = 22;
 
         String senMode = "on";
         Intent sensorIntent = getIntent();
@@ -124,14 +105,12 @@ public class PlayScreen extends AppCompatActivity implements View.OnClickListene
         }
         else sensorM = false;
 
-
         //Initial variables
         for (int k = 0; k < 5; k++)
             divideScreenWidth.add(k * STEP);
         vib = (Vibrator) getSystemService(VIBRATOR_SERVICE);
         playingNow = true;
         carX = divideScreenWidth.get(divideScreenWidth.size() / 2);
-        //car.setX(carX);
         spike1Y = spike1.getY();
 
         lifes = LIFE;
@@ -213,11 +192,23 @@ public class PlayScreen extends AppCompatActivity implements View.OnClickListene
     }
 
     public void playMovement() {
-
+       if (first == 0) {
+           spike1.setVisibility(View.INVISIBLE);
+           spike2.setVisibility(View.INVISIBLE);
+           spike3.setVisibility(View.INVISIBLE);
+           spike4.setVisibility(View.INVISIBLE);
+           fuel.setVisibility(View.INVISIBLE);
+           first++;
+       }
         spike1Y += moveSpeed;
         //Check zombie position
         if (spike1Y > UP) {
             spike1Y = ZERO;
+            spike1.setVisibility(View.VISIBLE);
+            spike2.setVisibility(View.VISIBLE);
+            spike3.setVisibility(View.VISIBLE);
+            spike4.setVisibility(View.VISIBLE);
+            fuel.setVisibility(View.VISIBLE);
             spike1X = divideScreenWidth.remove(random.nextInt(divideScreenWidth.size() - 1));
             spike2X = divideScreenWidth.remove(random.nextInt(divideScreenWidth.size() - 1));
             spike3X = divideScreenWidth.remove(random.nextInt(divideScreenWidth.size() - 1));
@@ -240,7 +231,7 @@ public class PlayScreen extends AppCompatActivity implements View.OnClickListene
         fuel.setX(fuelX);
         fuel.setY(spike1Y + 40);
         if (hitCheck(fuelX - 30 , spike1Y)) {
-            //if(spike1Y%20 == 0)
+
             score += 5;
             showScore.setText("SCORE: " + score);
         }
@@ -251,7 +242,6 @@ public class PlayScreen extends AppCompatActivity implements View.OnClickListene
             isHit = true;
             lifes--;
             vibrationPhone();
-            //sound.playHit();
             setLife();
         } else {
             isHit = false;
@@ -319,53 +309,12 @@ public class PlayScreen extends AppCompatActivity implements View.OnClickListene
 
     }
 
-    private void startGpsService() {
-        if (!runtime_permissions()) {
-            Intent i = new Intent(getApplicationContext(), GPS_Service.class);
-            startService(i);
-        }
-
-    }
-
-    private boolean runtime_permissions() {
-        if (Build.VERSION.SDK_INT >= 28 && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 100);
-
-            return true;
-        }
-        return false;
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 100) {
-//            if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-//                startGpsService();
-//            } else {
-//                runtime_permissions();
-//            }
         }
     }
-
-    public void getGpsInfo(){
-        startGpsService();
-        if (broadcastReceiver == null) {
-            broadcastReceiver = new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
-
-                    latitude = (double) intent.getExtras().get("latitude");
-                    longitude = (double) intent.getExtras().get("longitude");
-
-                }
-            };
-        }
-        registerReceiver(broadcastReceiver, new IntentFilter("update_location"));
-
-    }
-
-
 }
 

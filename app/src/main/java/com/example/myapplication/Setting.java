@@ -25,33 +25,13 @@ public class Setting extends AppCompatActivity {
         sensorButton = findViewById(R.id.buttonSensor);
         backButton = findViewById(R.id.buttonBack);
 
-        slowButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View V) {
-                slowSpeed(V);
-            }
-        });
+        slowButton.setOnClickListener(V -> slowSpeed(V));
 
-        fastButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View V) {
-                fastSpeed(V);
-            }
-        });
+        fastButton.setOnClickListener(V -> fastSpeed(V));
 
-        sensorButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View V) {
-                sensor(V);
-            }
-        });
+        sensorButton.setOnClickListener(V -> sensor(V));
 
-        backButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View V) {
-                backToMenu();
-            }
-        });
+        backButton.setOnClickListener(V -> backToMenu());
     }
 
     public void backToMenu(){
